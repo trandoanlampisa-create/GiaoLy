@@ -283,12 +283,14 @@ function BlanksRunner({ source }: { source: Source }) {
   if (!item) return <div className="text-muted-foreground">Chưa có nội dung.</div>;
 
   const correctWords = blanks.map((i) => stripPunct(tokens[i]));
-  const results = checked ? answers.map((a, i) => normalizeAnswer(stripPunct(a)) === normalizeAnswer(correctWords[i].toLowerCase())) : [];
-  const allCorrect = checked && results.every(Boolean);
+  const results = checked
+    ? correctWords.map((cw, i) => normalizeAnswer(stripPunct(answers[i] ?? "")) === normalizeAnswer((cw ?? "").toLowerCase()))
+    : [];
+  const allCorrect = checked && results.length > 0 && results.every(Boolean);
 
   function check() {
     setChecked(true);
-    const ok = answers.every((a, i) => normalizeAnswer(stripPunct(a)) === normalizeAnswer(correctWords[i].toLowerCase()));
+    const ok = correctWords.every((cw, i) => normalizeAnswer(stripPunct(answers[i] ?? "")) === normalizeAnswer((cw ?? "").toLowerCase()));
     if (ok) markFillCorrect(item.id);
     else addFillMistake({
       id: item.id, sourceTitle: item.sourceTitle, fullSentence: item.fullSentence,
